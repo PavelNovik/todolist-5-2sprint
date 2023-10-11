@@ -16,25 +16,19 @@ type PropsType = {
     addTask: (todolistId: string, title: string) => void
     changeTaskStatus: (todolistId: string, taskId: string, isDone: boolean) => void
     // filter: FilterValuesType
-    removeTodolist: (todolistId:string)=> void
+    removeTodolist: (todolistId: string) => void
 }
 
 export function Todolist(props: PropsType) {
 
 
-    let [title, setTitle] = useState("")
-    let [error, setError] = useState<string | null>(null)
+    const [title, setTitle] = useState("")
+    const [error, setError] = useState<string | null>(null)
 
     const [filter, setFilter] = useState<FilterValuesType>('all')
 
-    let tasksForTodolist = props.tasks;
+    let tasksForTodolist = filter === "active" ? props.tasks.filter(t => !t.isDone) : (filter === "completed") ? props.tasks.filter(t => t.isDone) : props.tasks;
 
-    if (filter === "active") {
-        tasksForTodolist = props.tasks.filter(t => !t.isDone);
-    }
-    if (filter === "completed") {
-        tasksForTodolist = props.tasks.filter(t => t.isDone);
-    }
 
     const addTask = () => {
         if (title.trim() !== "") {
@@ -44,9 +38,9 @@ export function Todolist(props: PropsType) {
             setError("Title is required");
         }
     }
-const removeTodolistHandler = () => {
+    const removeTodolistHandler = () => {
         props.removeTodolist(props.todolistId)
-}
+    }
     const onChangeHandler = (e: ChangeEvent<HTMLInputElement>) => {
         setTitle(e.currentTarget.value)
     }
@@ -59,12 +53,14 @@ const removeTodolistHandler = () => {
     }
 
     const onAllClickHandler = () => setFilter("all");
-    const onActiveClickHandler = () => setFilter( "active");
-    const onCompletedClickHandler = () => setFilter( "completed");
+    const onActiveClickHandler = () => setFilter("active");
+    const onCompletedClickHandler = () => setFilter("completed");
 
 
     return <div>
-        <h3>{props.title}<button onClick={removeTodolistHandler}>X</button></h3>
+        <h3>{props.title}
+            <button onClick={removeTodolistHandler}>X</button>
+        </h3>
         <div>
             <input value={title}
                    onChange={onChangeHandler}
